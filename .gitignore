@@ -1,5 +1,5 @@
 # Compiled output
-/dist
+# /dist (commented for GitHub Pages)
 /tmp
 /out-tsc
 /bazel-out

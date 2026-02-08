@@ -1,0 +1,30 @@
+[
+  {
+    "author": "Sophie Martin",
+    "initial": "S",
+    "text": "Excellent travail ! Damien a transformé notre jardin en un véritable havre de paix. Professionnel, à l'écoute et de très bon conseil.",
+    "rating": 5,
+    "date": "Il y a 2 semaines"
+  },
+  {
+    "author": "Pierre Dubois",
+    "initial": "P",
+    "text": "Je recommande vivement Studio Vert. Travail soigné, respect des délais et crédit d'impôt appliqué. Notre terrasse est magnifique !",
+    "rating": 5,
+    "date": "Il y a 1 mois"
+  },
+  {
+    "author": "Marie Leclerc",
+    "initial": "M",
+    "text": "Service impeccable du début à la fin. Damien a su créer un aménagement paysager qui correspond parfaitement à nos attentes.",
+    "rating": 5,
+    "date": "Il y a 3 semaines"
+  },
+  {
+    "author": "Jean Rousseau",
+    "initial": "J",
+    "text": "Très satisfait de la prestation. L'entretien régulier de notre jardin est toujours réalisé avec soin. Merci !",
+    "rating": 5,
+    "date": "Il y a 1 semaine"
+  }
+]
