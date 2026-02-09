@@ -798,8 +798,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       const oversizedFiles = validFiles.filter(file => file.size > maxSize);
 
       if (oversizedFiles.length > 0) {
-        const fileNames = oversizedFiles.map(f => f.name).join(', ');
-        this.fileUploadError = `Fichier trop gros : ${fileNames} (max 10 MB)`;
+        this.fileUploadError = 'Fichier trop gros (max 10 MB)';
         input.value = '';
         return;
       }

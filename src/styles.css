@@ -902,9 +902,8 @@ body:not(.loaded) .animate-in {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-right: calc(var(--work-next-btn-size) + clamp(16px, 3vw, 32px)); /* Space for NEXT button */
   --work-slide-max: 1063px;
-  --work-peek: clamp(80px, 12vw, 180px);
+  --work-peek: clamp(100px, 15vw, 200px);
   --work-slide-width: min(var(--work-slide-max), calc(100% - var(--work-peek)));
   --work-slide-gap: 24px;
   --work-container-width: min(
@@ -923,10 +922,10 @@ body:not(.loaded) .animate-in {
 /* Shell around carousel to align overlay with image top */
 .works-carousel-shell {
   position: relative;
-  width: var(--work-container-width);
-  max-width: var(--work-container-width);
+  width: calc(100% + var(--works-padding-x));
+  max-width: calc(100% + var(--works-padding-x));
   margin-bottom: 2.5rem;
-  margin-right: calc(var(--work-bleed-right) * -1);
+  margin-right: calc(-1 * var(--works-padding-x));
 }
 
 /* Simple Carousel with Scroll Snap */
@@ -2143,6 +2142,23 @@ textarea.form-input {
   .form-row {
     grid-template-columns: 1fr;
   }
+
+  .file-preview-name {
+    max-width: 60px;
+  }
+
+  .file-preview-item {
+    flex-shrink: 0;
+    max-width: 110px;
+  }
+
+  .file-upload-text {
+    font-size: 0.85rem;
+  }
+
+  .file-upload-info {
+    font-size: 0.7rem;
+  }
 }
 
 /* Tablettes - breakpoint intermédiaire */
@@ -2242,6 +2258,23 @@ textarea.form-input {
 
   .contact-container {
     padding: 0 1.5rem;
+  }
+
+  .file-preview-name {
+    max-width: 50px;
+  }
+
+  .file-preview-item {
+    flex-shrink: 0;
+    max-width: 100px;
+  }
+
+  .file-upload-text {
+    font-size: 0.8rem;
+  }
+
+  .file-upload-info {
+    font-size: 0.65rem;
   }
 }
 
@@ -2923,7 +2956,9 @@ textarea.form-input {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .file-preview-item {
@@ -2935,6 +2970,8 @@ textarea.form-input {
   border-radius: 6px;
   border: 1px solid rgba(107, 117, 83, 0.15);
   flex: 0 0 auto;
+  min-width: 0;
+  max-width: clamp(110px, 16vw, 180px);
 }
 
 .file-preview-name {
@@ -2943,7 +2980,7 @@ textarea.form-input {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80px;
+  max-width: clamp(90px, 12vw, 150px);
 }
 
 .file-remove-compact {
@@ -3125,6 +3162,22 @@ textarea.form-input {
   .contact-form-compact {
     flex: 1;
     justify-content: space-between;
+  }
+
+  .file-preview-item {
+    max-width: clamp(75px, 10vw, 115px);
+    padding: 0.3rem 0.45rem;
+    gap: 0.35rem;
+  }
+
+  .file-preview-name {
+    max-width: clamp(55px, 8vw, 90px);
+  }
+
+  .file-remove-compact {
+    width: 15px;
+    height: 15px;
+    font-size: 0.75rem;
   }
 }
 
