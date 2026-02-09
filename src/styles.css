@@ -1668,7 +1668,7 @@ body:not(.loaded) .animate-in {
 
 .reviews-carousel {
   position: relative;
-  max-width: 960px;
+  max-width: 950px;
   margin: 0 auto 3rem;
   padding: 0 80px;
 }
@@ -1688,7 +1688,7 @@ body:not(.loaded) .animate-in {
   min-width: 100%;
   width: 100%;
   flex-shrink: 0;
-  padding: 3rem;
+  padding: 1.5rem 3rem 0.8rem;
   background: var(--white);
   border-radius: 20px;
   box-shadow: 0 5px 20px var(--shadow);
@@ -1707,7 +1707,7 @@ body:not(.loaded) .animate-in {
 .review-header {
   display: flex;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
   align-items: center;
 }
 
@@ -1742,9 +1742,9 @@ body:not(.loaded) .animate-in {
 
 .review-text {
   font-size: 1.1rem;
-  line-height: 1.8;
+  line-height: 1.6;
   color: var(--black);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.3rem;
   font-style: italic;
   opacity: 0.9;
 }
@@ -2194,15 +2194,58 @@ textarea.form-input {
   padding: 0 2rem;
 }
 
-.services-section-title {
+/* Header avec titre et label */
+.services-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4rem;
+  gap: 2rem;
+}
+
+.services-title {
   font-family: 'Raleway', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.25;
+  color: #374836;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  max-width: 600px;
+  margin: 0;
+  text-align: right;
+}
+
+.services-title .highlight-word {
+  color: rgb(55 72 54 / 50%);
+  font-weight: 500;
+}
+
+.services-nav-label {
+  background: transparent;
+  border: none;
+  padding: 0;
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #374836;
-  margin: 0 0 3rem 0;
-  text-align: left;
+  font-family: 'Raleway', sans-serif;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Description */
+.services-description {
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #37483699;
+  margin: 0 auto 4rem auto;
+  text-align: center;
+  max-width: 800px;
 }
 
 /* Grille de services */
@@ -2292,8 +2335,15 @@ textarea.form-input {
     padding: 4rem 0;
   }
 
-  .services-section-title {
-    margin-bottom: 2rem;
+  .services-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .services-title {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
   }
 
   .services-grid {
@@ -2316,7 +2366,7 @@ textarea.form-input {
 
 .contact-v2 {
   background: #f5f7f0;
-  padding: 6rem 0;
+  padding: 6rem 0 8rem 0;
 }
 
 /* Container avec Grid */
@@ -2440,6 +2490,7 @@ textarea.form-input {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
 }
 
 .form-row {
@@ -2522,6 +2573,24 @@ textarea.form-input {
   flex-shrink: 0;
 }
 
+/* Placeholder avec info de taille */
+.file-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.file-upload-text {
+  color: rgb(55 72 54 / 70%);
+  font-size: 0.9rem;
+}
+
+.file-upload-info {
+  color: rgb(55 72 54 / 50%);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
 .file-upload-add-btn {
   width: 32px;
   height: 32px;
@@ -2542,6 +2611,18 @@ textarea.form-input {
 .file-upload-compact:hover .file-upload-add-btn {
   background: #6B7553;
   transform: scale(1.05);
+}
+
+/* État d'erreur */
+.file-upload-compact.has-error {
+  border-color: #dc3545;
+  border-width: 2px;
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.file-upload-text.error-text {
+  color: #dc3545;
+  font-weight: 600;
 }
 
 /* Preview compact */
@@ -2609,6 +2690,8 @@ textarea.form-input {
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 0.25rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .form-submit-compact:hover:not(:disabled) {
@@ -2618,26 +2701,93 @@ textarea.form-input {
 }
 
 .form-submit-compact:disabled {
-  opacity: 0.5;
+  opacity: 0.7;
   cursor: not-allowed;
+}
+
+.form-submit-compact.sending {
+  background: #6B7553;
+}
+
+.form-submit-compact.success {
+  background: #4CAF50;
+  animation: successPulse 0.4s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.btn-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Spinner SVG animation */
+.spinner {
+  animation: rotate 2s linear infinite;
+  width: 20px;
+  height: 20px;
+}
+
+.spinner .path {
+  stroke: #f9fbf3;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
 }
 
 /* Success Message Compact */
 .form-success-compact {
-  margin-top: 1rem;
+  position: absolute;
+  top: -60px;
+  left: 0;
+  right: 0;
   padding: 0.875rem;
-  background: rgba(107, 117, 83, 0.1);
+  background: rgba(107, 117, 83, 0.95);
   border-left: 4px solid #6B7553;
   border-radius: 6px;
-  color: #374836;
+  color: #ffffff;
   font-size: 0.9rem;
-  animation: slideIn 0.3s ease;
+  animation: slideInDown 0.3s ease;
+  box-shadow: 0 4px 12px rgba(107, 117, 83, 0.3);
 }
 
-@keyframes slideIn {
+@keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;

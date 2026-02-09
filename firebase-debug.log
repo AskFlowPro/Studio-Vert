@@ -1,9 +1,0 @@
-[debug] [2026-02-09T01:12:58.043Z] ----------------------------------------------------------------------
-[debug] [2026-02-09T01:12:58.046Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\lcoui\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login
-[debug] [2026-02-09T01:12:58.046Z] CLI Version:   15.5.1
-[debug] [2026-02-09T01:12:58.046Z] Platform:      win32
-[debug] [2026-02-09T01:12:58.046Z] Node Version:  v20.12.2
-[debug] [2026-02-09T01:12:58.046Z] Time:          Mon Feb 09 2026 02:12:58 GMT+0100 (heure normale d’Europe centrale)
-[debug] [2026-02-09T01:12:58.047Z] ----------------------------------------------------------------------
-[debug] 
-[info] Already logged in as lcouillard.pro@gmail.com

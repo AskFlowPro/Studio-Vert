@@ -6,6 +6,9 @@
  * 2. Récupération hebdomadaire des avis Google (scheduled function)
  */
 
+// Charger les variables d'environnement depuis .env
+require('dotenv').config();
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
@@ -15,13 +18,19 @@ const cors = require('cors');
 
 admin.initializeApp();
 
+// Configurer Firestore pour utiliser la base de données nommée
+const db = admin.firestore();
+db.settings({
+  databaseId: 'studiovert-database'
+});
+
 // ============ CONFIGURATION ============
 const CONFIG = {
-  googleApiKey: functions.config().google?.api_key || process.env.GOOGLE_API_KEY,
-  googlePlaceId: functions.config().google?.place_id || process.env.GOOGLE_PLACE_ID,
-  emailTo: functions.config().email?.to || process.env.EMAIL_TO,
-  emailUser: functions.config().email?.user || process.env.EMAIL_USER,
-  emailPassword: functions.config().email?.password || process.env.EMAIL_PASSWORD,
+  googleApiKey: process.env.GOOGLE_API_KEY || 'AIzaSyCrKEvFxcABHXKD-E6xxNe_YwviEXROGuE',
+  googlePlaceId: process.env.GOOGLE_PLACE_ID || 'ChIJwfhSL4Pq9EcRqcmswNRXNzU',
+  emailTo: process.env.EMAIL_TO || 'studiovertpaysage@gmail.com',
+  emailUser: process.env.EMAIL_USER || 'studiovertpaysage@gmail.com',
+  emailPassword: process.env.EMAIL_PASSWORD || '',
 };
 
 // Configuration email
@@ -88,8 +97,15 @@ function formatReviews(googleData) {
     return [];
   }
 
+  // Filtrer uniquement les avis 5 étoiles
+  const fiveStarReviews = googleData.reviews.filter(review => review.rating === 5);
+
+  // Trier par date (les plus récents d'abord basé sur le timestamp)
+  fiveStarReviews.sort((a, b) => (b.time || 0) - (a.time || 0));
+
+  // Limiter à 4 avis maximum
   const reviews = [];
-  for (const review of googleData.reviews.slice(0, 5)) {
+  for (const review of fiveStarReviews.slice(0, 4)) {
     reviews.push({
       author: review.author_name || 'Anonyme',
       initial: (review.author_name || 'A')[0].toUpperCase(),
@@ -138,67 +154,75 @@ exports.updateGoogleReviewsScheduled = functions.pubsub
 // ============ HTTP FUNCTION: API ENVOI EMAIL ============
 const app = express();
 app.use(cors({ origin: true }));
-app.use(express.json());
 
-app.post('/contact', async (req, res) => {
+app.post('/contact', express.json({ limit: '10mb' }), async (req, res) => {
   console.log('📧 Nouvelle demande de contact');
 
-  let { name, email, phone, message } = req.body;
-
-  // Validation basique
-  if (!name || !email || !message) {
-    return res.status(400).json({
-      success: false,
-      message: 'Veuillez remplir tous les champs obligatoires'
-    });
-  }
-
-  // Sanitization
-  name = sanitizeInput(name);
-  email = sanitizeInput(email);
-  phone = phone ? sanitizeInput(phone) : '';
-  message = sanitizeInput(message);
-
-  // Validation email
-  if (!isValidEmail(email)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Adresse email invalide'
-    });
-  }
-
-  // Validation téléphone
-  if (phone && !isValidPhone(phone)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Numéro de téléphone invalide'
-    });
-  }
-
-  // Bloquer les liens
-  if (containsURL(name) || containsURL(message)) {
-    console.warn('⚠️ Spam détecté: URL dans le formulaire');
-    return res.status(400).json({
-      success: false,
-      message: 'Les liens ne sont pas autorisés dans le formulaire'
-    });
-  }
-
-  // Limiter la longueur
-  if (name.length > 100 || message.length > 2000 || (phone && phone.length > 30)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Un ou plusieurs champs sont trop longs'
-    });
-  }
-
   try {
+    let { name, email, phone, message, attachments = [] } = req.body;
+
+    // Validation basique
+    if (!name || !email || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'Veuillez remplir tous les champs obligatoires'
+      });
+    }
+
+    // Sanitization
+    name = sanitizeInput(name);
+    email = sanitizeInput(email);
+    phone = phone ? sanitizeInput(phone) : '';
+    message = sanitizeInput(message);
+
+    // Validation email
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Adresse email invalide'
+      });
+    }
+
+    // Validation téléphone
+    if (phone && !isValidPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Numéro de téléphone invalide'
+      });
+    }
+
+    // Bloquer les liens
+    if (containsURL(name) || containsURL(message)) {
+      console.warn('⚠️ Spam détecté: URL dans le formulaire');
+      return res.status(400).json({
+        success: false,
+        message: 'Les liens ne sont pas autorisés dans le formulaire'
+      });
+    }
+
+    // Limiter la longueur
+    if (name.length > 100 || message.length > 2000 || (phone && phone.length > 30)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un ou plusieurs champs sont trop longs'
+      });
+    }
+
+    // Préparer les pièces jointes depuis base64
+    const emailAttachments = attachments.map((file) => ({
+      filename: file.name || 'photo.jpg',
+      content: file.data,
+      encoding: 'base64',
+      contentType: file.type || 'image/jpeg'
+    }));
+
     // Composer l'email
     const mailOptions = {
       from: `"Studio Vert Contact" <${CONFIG.emailUser}>`,
       to: CONFIG.emailTo,
       replyTo: email,
       subject: `🌿 Nouveau contact: ${name}`,
+      attachments: emailAttachments,
       html: `
         <!DOCTYPE html>
         <html>
@@ -273,7 +297,7 @@ app.post('/contact', async (req, res) => {
 });
 
 // Mise à jour manuelle des avis
-app.post('/update-reviews', async (req, res) => {
+app.post('/update-reviews', express.json(), async (req, res) => {
   console.log('🔄 Mise à jour manuelle des avis');
 
   try {

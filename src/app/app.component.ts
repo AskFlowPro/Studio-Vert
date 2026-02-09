@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angula
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-root',
@@ -174,7 +175,21 @@ import { HttpClient } from '@angular/common/http';
     <!-- Services Section -->
     <section id="services" class="services-v2">
       <div class="services-container">
-        <h3 class="services-section-title scroll-reveal">[ SERVICES ]</h3>
+        <!-- Header avec label et titre -->
+        <div class="services-header scroll-reveal">
+          <div>
+            <h3 class="services-nav-label">[ SERVICES ]</h3>
+          </div>
+          <h2 class="services-title">
+            CRÉATION <span class="highlight-word">&</span><br>
+            ENTRETIEN
+          </h2>
+        </div>
+
+        <!-- Description -->
+        <p class="services-description scroll-reveal">
+          Du jardin de rêve à l'entretien régulier, nous transformons vos espaces extérieurs avec passion et expertise. Découvrez nos prestations sur-mesure.
+        </p>
 
         <!-- Grille de services -->
         <div class="services-grid">
@@ -220,7 +235,7 @@ import { HttpClient } from '@angular/common/http';
           <h3 class="reviews-section-title">[ AVIS ]</h3>
           <h2 class="reviews-tagline">
             CE QUE DISENT<br>
-            <span class="reviews-tagline-light">NOS CLIENTS</span>
+            <span class="reviews-tagline-light">NOS</span> CLIENTS
           </h2>
           <p class="reviews-intro-text">
             Découvrez les témoignages de nos clients satisfaits qui nous ont fait confiance pour transformer leurs espaces extérieurs.
@@ -363,7 +378,8 @@ import { HttpClient } from '@angular/common/http';
               <label
                 for="fileInput"
                 class="file-upload-compact"
-                [class.disabled]="formData.attachments.length >= 3">
+                [class.disabled]="formData.attachments.length >= 3"
+                [class.has-error]="fileUploadError">
                 <div class="file-upload-left">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -371,8 +387,13 @@ import { HttpClient } from '@angular/common/http';
                     <polyline points="21 15 16 10 5 21"></polyline>
                   </svg>
 
+                  <!-- Message d'erreur si présent -->
+                  <div class="file-upload-placeholder" *ngIf="fileUploadError">
+                    <span class="file-upload-text error-text">{{fileUploadError}}</span>
+                  </div>
+
                   <!-- Preview compact intégré -->
-                  <div class="file-preview-compact" *ngIf="formData.attachments.length > 0; else noFiles">
+                  <div class="file-preview-compact" *ngIf="formData.attachments.length > 0 && !fileUploadError">
                     <div
                       class="file-preview-item"
                       *ngFor="let file of formData.attachments; let i = index">
@@ -384,9 +405,11 @@ import { HttpClient } from '@angular/common/http';
                     </div>
                   </div>
 
-                  <ng-template #noFiles>
-                    <span>Ajouter des photos (max 3)</span>
-                  </ng-template>
+                  <!-- Placeholder par défaut -->
+                  <div class="file-upload-placeholder" *ngIf="formData.attachments.length === 0 && !fileUploadError">
+                    <span class="file-upload-text">Ajouter des photos (max 3)</span>
+                    <span class="file-upload-info">Max 10 MB par image</span>
+                  </div>
                 </div>
 
                 <div class="file-upload-add-btn">+</div>
@@ -396,13 +419,23 @@ import { HttpClient } from '@angular/common/http';
             <button
               type="submit"
               class="form-submit-compact"
-              [disabled]="!contactForm.form.valid">
-              Envoyer ma demande
+              [disabled]="!contactForm.form.valid || formSending"
+              [class.sending]="formSending"
+              [class.success]="formSubmitted">
+              <span *ngIf="!formSending && !formSubmitted">Envoyer ma demande</span>
+              <span *ngIf="formSending" class="btn-loader">
+                <svg class="spinner" viewBox="0 0 50 50">
+                  <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                </svg>
+                Envoi en cours...
+              </span>
+              <span *ngIf="formSubmitted" class="btn-success">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Message envoyé !
+              </span>
             </button>
-
-            <p *ngIf="formSubmitted" class="form-success-compact">
-              ✓ Merci ! Je vous recontacterai rapidement.
-            </p>
           </form>
         </div>
       </div>
@@ -437,6 +470,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   currentReviewIndex = 0;
   currentWorkIndex = 0;
   formSubmitted = false;
+  formSending = false;
   phoneVisible = false;
   emailVisible = false;
   isLoading = true;
@@ -449,28 +483,33 @@ export class AppComponent implements OnInit, AfterViewInit {
     attachments: [] as File[]
   };
 
+  fileUploadError = '';
+
   @ViewChild('carouselContainer') carouselContainer!: ElementRef<HTMLElement>;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private toastr: ToastrService
+  ) {}
 
   services = [
     {
       number: '01',
       title: 'Création de jardins',
       description: 'Conception et réalisation de votre jardin sur-mesure, adapté à vos envies.',
-      image: 'assets/photos/WhatsApp Image 2026-02-07 at 17.12.12 (1).jpeg'
+      image: 'assets/photos/dessin.png'
     },
     {
       number: '02',
       title: 'Entretien paysager',
       description: 'Taille, tonte, débroussaillage et entretien régulier toute l\'année.',
-      image: 'assets/photos/WhatsApp Image 2026-02-07 at 17.12.33 (1).jpeg'
+      image: 'assets/photos/WhatsApp Image 2026-02-07 at 17.12.34 (1).jpeg'
     },
     {
       number: '03',
       title: 'Aménagement végétal',
       description: 'Plantation d\'arbres, arbustes et massifs floraux pour embellir vos espaces.',
-      image: 'assets/photos/WhatsApp Image 2026-02-07 at 17.12.34 (2).jpeg'
+      image: 'assets/photos/amenagement.jpg'
     }
   ];
 
@@ -598,10 +637,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadGoogleReviews() {
-    this.http.get<any[]>('assets/google-reviews.json').subscribe({
+    this.http.get<any>('https://us-central1-studiovert-site.cloudfunctions.net/api/reviews').subscribe({
       next: (data) => {
-        if (data && data.length > 0) {
-          this.reviews = data;
+        if (data && data.reviews && data.reviews.length > 0) {
+          // Tronquer les avis trop longs (max 200 caractères)
+          this.reviews = data.reviews.map((review: any) => ({
+            ...review,
+            text: this.truncateText(review.text, 200)
+          }));
           console.log('✅ Avis Google chargés:', this.reviews.length);
         }
       },
@@ -610,6 +653,16 @@ export class AppComponent implements OnInit, AfterViewInit {
         // Garde les avis par défaut si erreur
       }
     });
+  }
+
+  truncateText(text: string, maxLength: number): string {
+    if (!text || text.length <= maxLength) {
+      return text;
+    }
+    // Tronquer au dernier espace avant la limite pour éviter de couper un mot
+    const truncated = text.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    return lastSpace > 0 ? truncated.substring(0, lastSpace) + '...' : truncated + '...';
   }
 
   ngAfterViewInit() {
@@ -714,23 +767,39 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   onFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
+    this.fileUploadError = ''; // Réinitialiser l'erreur
+
     if (input.files) {
       const files = Array.from(input.files);
       const totalFiles = this.formData.attachments.length + files.length;
 
       if (totalFiles > 3) {
-        alert('Vous ne pouvez télécharger que 3 photos maximum');
+        this.fileUploadError = 'Maximum 3 photos autorisées';
+        input.value = ''; // Reset input
         return;
       }
 
       // Vérifier que ce sont des images
       const validFiles = files.filter(file => file.type.startsWith('image/'));
       if (validFiles.length !== files.length) {
-        alert('Seules les images sont acceptées');
+        this.fileUploadError = 'Seules les images (JPG, PNG, etc.) sont acceptées';
+        input.value = '';
+        return;
+      }
+
+      // Vérifier la taille de chaque fichier (max 10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB en bytes
+      const oversizedFiles = validFiles.filter(file => file.size > maxSize);
+
+      if (oversizedFiles.length > 0) {
+        const fileNames = oversizedFiles.map(f => f.name).join(', ');
+        this.fileUploadError = `Fichier trop gros : ${fileNames} (max 10 MB)`;
+        input.value = '';
         return;
       }
 
       this.formData.attachments = [...this.formData.attachments, ...validFiles];
+      input.value = ''; // Reset pour permettre de réajouter le même fichier si supprimé
     }
   }
 
@@ -738,38 +807,108 @@ export class AppComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
     event.preventDefault();
     this.formData.attachments.splice(index, 1);
+    this.fileUploadError = ''; // Clear error when removing a file
   }
 
   getFilePreview(file: File): string {
     return URL.createObjectURL(file);
   }
 
-  submitForm() {
+  async submitForm() {
     console.log('Form submitted:', this.formData);
 
-    // Préparer les données à envoyer (sans les fichiers pour l'instant)
-    const formPayload = {
-      name: this.formData.name,
-      email: this.formData.email,
-      phone: this.formData.phone,
-      message: this.formData.message
-    };
+    // Activer l'état d'envoi
+    this.formSending = true;
+    this.formSubmitted = false;
 
-    // Envoyer au backend
-    this.http.post('http://localhost:3000/api/contact', formPayload).subscribe({
-      next: (response: any) => {
-        console.log('✅ Email envoyé avec succès:', response);
-        this.formSubmitted = true;
+    try {
+      // Convertir les fichiers en base64
+      const attachmentsBase64 = await Promise.all(
+        this.formData.attachments.map(file => this.fileToBase64(file))
+      );
 
-        setTimeout(() => {
-          this.formData = { name: '', email: '', phone: '', message: '', attachments: [] };
-          this.formSubmitted = false;
-        }, 5000);
-      },
-      error: (error) => {
-        console.error('❌ Erreur lors de l\'envoi:', error);
-        alert('Erreur lors de l\'envoi du message. Veuillez vérifier que le backend est démarré.');
-      }
+      // Préparer les données en JSON
+      const payload = {
+        name: this.formData.name,
+        email: this.formData.email,
+        phone: this.formData.phone,
+        message: this.formData.message,
+        attachments: attachmentsBase64
+      };
+
+      // Envoyer au backend Firebase Functions en JSON
+      this.http.post('https://us-central1-studiovert-site.cloudfunctions.net/api/contact', payload).subscribe({
+        next: (response: any) => {
+          console.log('✅ Email envoyé avec succès:', response);
+
+          // Afficher la validation
+          this.formSending = false;
+          this.formSubmitted = true;
+
+          // Réinitialiser le formulaire après 2 secondes
+          setTimeout(() => {
+            this.formData = { name: '', email: '', phone: '', message: '', attachments: [] };
+            this.formSubmitted = false;
+          }, 2000);
+        },
+        error: (error) => {
+          console.error('❌ Erreur lors de l\'envoi:', error);
+          this.formSending = false;
+
+          const errorMessage = error.error?.message || 'Une erreur est survenue lors de l\'envoi';
+          alert(errorMessage);
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de la conversion des fichiers:', error);
+      this.formSending = false;
+      this.fileUploadError = 'Erreur lors du traitement des images';
+    }
+  }
+
+  private fileToBase64(file: File): Promise<{name: string, data: string, type: string}> {
+    return new Promise((resolve, reject) => {
+      // Compresser l'image avant de l'envoyer
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+
+      img.onload = () => {
+        // Limiter la taille maximale à 1200px
+        const maxSize = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width;
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height;
+          height = maxSize;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convertir en base64 avec compression JPEG à 85%
+        const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+        resolve({
+          name: file.name.replace(/\.[^.]+$/, '.jpg'), // Changer l'extension en .jpg
+          data: base64,
+          type: 'image/jpeg'
+        });
+      };
+
+      img.onerror = reject;
+
+      // Charger l'image
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
   }
 

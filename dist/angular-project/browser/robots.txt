@@ -1,0 +1,11 @@
+# Studio Vert - Paysagiste Lyon
+# https://studiovertpaysage.fr
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://studiovertpaysage.fr/sitemap.xml
+
+# Crawl-delay (optionnel, pour éviter de surcharger le serveur)
+Crawl-delay: 1
