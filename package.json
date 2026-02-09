@@ -17,7 +17,12 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@types/jquery": "^3.5.33",
+    "bootstrap": "^5.3.8",
+    "jquery": "^4.0.0",
+    "ngx-slick-carousel": "^20.0.0",
     "rxjs": "~7.8.0",
+    "slick-carousel": "^1.8.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
