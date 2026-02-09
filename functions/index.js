@@ -201,7 +201,7 @@ app.post('/contact', express.json({ limit: '10mb' }), async (req, res) => {
     }
 
     // Limiter la longueur
-    if (name.length > 100 || message.length > 2000 || (phone && phone.length > 30)) {
+    if (name.length > 100 || message.length > 3000 || (phone && phone.length > 30)) {
       return res.status(400).json({
         success: false,
         message: 'Un ou plusieurs champs sont trop longs'
@@ -218,58 +218,173 @@ app.post('/contact', express.json({ limit: '10mb' }), async (req, res) => {
 
     // Composer l'email
     const mailOptions = {
-      from: `"Studio Vert Contact" <${CONFIG.emailUser}>`,
+      from: `"Studio Vert" <${CONFIG.emailUser}>`,
       to: CONFIG.emailTo,
       replyTo: email,
-      subject: `🌿 Nouveau contact: ${name}`,
+      subject: `Nouveau contact - ${name}`,
       attachments: emailAttachments,
       html: `
         <!DOCTYPE html>
-        <html>
+        <html lang="fr">
         <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #2C2C2C; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #6B7553 0%, #9BAA7F 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .header h1 { margin: 0; font-size: 28px; }
-            .content { background: #F5F1E8; padding: 30px; border-radius: 0 0 10px 10px; }
-            .field { margin-bottom: 20px; }
-            .label { font-weight: bold; color: #6B7553; display: block; margin-bottom: 5px; }
-            .value { background: white; padding: 12px; border-radius: 5px; border-left: 4px solid #9BAA7F; }
-            .footer { text-align: center; margin-top: 20px; color: #6B6B6B; font-size: 14px; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+              background: #f5f7f0;
+              padding: 40px 20px;
+            }
+            .email-wrapper {
+              max-width: 600px;
+              margin: 0 auto;
+              background: white;
+              border-radius: 16px;
+              overflow: hidden;
+              box-shadow: 0 4px 24px rgba(107, 117, 83, 0.1);
+            }
+            .header {
+              background: linear-gradient(135deg, #374836 0%, #6B7553 100%);
+              padding: 40px 30px;
+              text-align: center;
+            }
+            .logo {
+              font-family: 'Georgia', serif;
+              font-size: 32px;
+              font-weight: 700;
+              color: #F5F1E8;
+              letter-spacing: 0.05em;
+              margin-bottom: 8px;
+            }
+            .subtitle {
+              color: rgba(245, 241, 232, 0.9);
+              font-size: 15px;
+              font-weight: 400;
+              letter-spacing: 0.02em;
+            }
+            .content {
+              padding: 40px 30px;
+            }
+            .badge {
+              display: inline-block;
+              background: rgba(107, 117, 83, 0.1);
+              color: #374836;
+              padding: 8px 16px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              letter-spacing: 0.03em;
+              margin-bottom: 24px;
+              text-transform: uppercase;
+            }
+            .field {
+              margin-bottom: 24px;
+            }
+            .field-label {
+              font-size: 12px;
+              font-weight: 600;
+              color: #6B7553;
+              text-transform: uppercase;
+              letter-spacing: 0.08em;
+              margin-bottom: 8px;
+              display: block;
+            }
+            .field-value {
+              background: #F5F1E8;
+              padding: 16px 18px;
+              border-radius: 10px;
+              color: #374836;
+              font-size: 15px;
+              line-height: 1.6;
+              border-left: 3px solid #6B7553;
+            }
+            .field-value a {
+              color: #374836;
+              text-decoration: none;
+              font-weight: 500;
+            }
+            .field-value a:hover {
+              color: #6B7553;
+            }
+            .message-field {
+              white-space: pre-wrap;
+              word-wrap: break-word;
+            }
+            .attachments {
+              margin-top: 8px;
+              padding-top: 12px;
+              border-top: 1px solid rgba(107, 117, 83, 0.2);
+            }
+            .attachment-count {
+              font-size: 13px;
+              color: #6B7553;
+              font-weight: 500;
+            }
+            .footer {
+              background: #F5F1E8;
+              padding: 24px 30px;
+              text-align: center;
+              border-top: 1px solid rgba(107, 117, 83, 0.1);
+            }
+            .footer-text {
+              color: rgba(55, 72, 54, 0.6);
+              font-size: 13px;
+              line-height: 1.5;
+            }
+            .footer-link {
+              color: #6B7553;
+              text-decoration: none;
+              font-weight: 500;
+            }
           </style>
         </head>
         <body>
-          <div class="container">
+          <div class="email-wrapper">
             <div class="header">
-              <h1>🌿 STUDIO VERT</h1>
-              <p style="margin: 10px 0 0 0;">Nouvelle demande de contact</p>
+              <div class="logo">STUDIO VERT</div>
+              <div class="subtitle">Paysagiste Lyon & Alentours</div>
             </div>
+
             <div class="content">
+              <div class="badge">📩 Nouvelle demande</div>
+
               <div class="field">
-                <span class="label">👤 Nom</span>
-                <div class="value">${name}</div>
+                <span class="field-label">Contact</span>
+                <div class="field-value">${name}</div>
               </div>
 
               <div class="field">
-                <span class="label">📧 Email</span>
-                <div class="value"><a href="mailto:${email}" style="color: #6B7553; text-decoration: none;">${email}</a></div>
+                <span class="field-label">Email</span>
+                <div class="field-value">
+                  <a href="mailto:${email}">${email}</a>
+                </div>
               </div>
 
               ${phone ? `
               <div class="field">
-                <span class="label">📱 Téléphone</span>
-                <div class="value"><a href="tel:${phone}" style="color: #6B7553; text-decoration: none;">${phone}</a></div>
+                <span class="field-label">Téléphone</span>
+                <div class="field-value">
+                  <a href="tel:${phone}">${phone}</a>
+                </div>
               </div>
               ` : ''}
 
               <div class="field">
-                <span class="label">💬 Message</span>
-                <div class="value">${message.replace(/\n/g, '<br>')}</div>
+                <span class="field-label">Message</span>
+                <div class="field-value message-field">${message.replace(/\n/g, '<br>')}</div>
+                ${emailAttachments.length > 0 ? `
+                <div class="attachments">
+                  <span class="attachment-count">📎 ${emailAttachments.length} photo${emailAttachments.length > 1 ? 's' : ''} jointe${emailAttachments.length > 1 ? 's' : ''}</span>
+                </div>
+                ` : ''}
               </div>
             </div>
+
             <div class="footer">
-              <p>Envoyé depuis le formulaire de contact de studiovert.fr</p>
+              <p class="footer-text">
+                Envoyé depuis <a href="https://studiovertpaysage.fr" class="footer-link">studiovertpaysage.fr</a>
+              </p>
             </div>
           </div>
         </body>

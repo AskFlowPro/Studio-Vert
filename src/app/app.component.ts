@@ -133,26 +133,28 @@ import { ToastrService } from 'ngx-toastr';
             <span>Glisser pour naviguer →</span>
           </div>
 
-          <!-- Fixed overlay - positioned absolutely over second image -->
-          <div class="work-preview-controls">
-            <div class="work-preview-overlay"></div>
-          </div>
+          <div class="works-carousel-shell">
+            <!-- Fixed overlay - positioned absolutely over second image -->
+            <div class="work-preview-controls">
+              <div class="work-preview-overlay"></div>
+            </div>
 
-          <!-- Button NEXT - positioned at container edge -->
-          <button class="work-next-btn" (click)="nextSlide()">NEXT</button>
+            <!-- Button NEXT - positioned at container edge -->
+            <button class="work-next-btn" (click)="nextSlide()">NEXT</button>
 
-          <!-- Simple Carousel with CSS Scroll Snap -->
-          <div class="works-carousel-container" #carouselContainer>
-            <div class="works-carousel-track">
-              <!-- Loop through photos twice for infinite effect -->
-              <div *ngFor="let photo of featuredPhotos; let i = index" class="work-slide" [attr.data-index]="i">
-                <div class="work-main-image">
-                  <img [src]="photo.src" [alt]="photo.name">
+            <!-- Simple Carousel with CSS Scroll Snap -->
+            <div class="works-carousel-container" #carouselContainer>
+              <div class="works-carousel-track">
+                <!-- Loop through photos twice for infinite effect -->
+                <div *ngFor="let photo of featuredPhotos; let i = index" class="work-slide" [attr.data-index]="i">
+                  <div class="work-main-image">
+                    <img [src]="photo.src" [alt]="photo.name">
+                  </div>
                 </div>
-              </div>
-              <div *ngFor="let photo of featuredPhotos; let i = index" class="work-slide" [attr.data-index]="i + featuredPhotos.length">
-                <div class="work-main-image">
-                  <img [src]="photo.src" [alt]="photo.name">
+                <div *ngFor="let photo of featuredPhotos; let i = index" class="work-slide" [attr.data-index]="i + featuredPhotos.length">
+                  <div class="work-main-image">
+                    <img [src]="photo.src" [alt]="photo.name">
+                  </div>
                 </div>
               </div>
             </div>
@@ -354,14 +356,18 @@ import { ToastrService } from 'ngx-toastr';
                 class="form-input-compact">
             </div>
 
-            <div class="form-field">
+            <div class="form-field message-field-wrapper">
               <textarea
                 name="message"
                 [(ngModel)]="formData.message"
                 placeholder="Décrivez votre projet..."
                 rows="4"
+                maxlength="3000"
                 required
                 class="form-input-compact form-textarea-compact"></textarea>
+              <div class="character-counter">
+                {{formData.message.length}} / 3000
+              </div>
             </div>
 
             <!-- Upload de photos compact -->
