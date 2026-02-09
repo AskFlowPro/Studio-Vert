@@ -43,6 +43,102 @@ body {
   overflow-x: hidden;
 }
 
+/* ================================
+   PAGE LOADER
+   ================================ */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #8B9573;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.page-loader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Bloquer toutes les animations pendant le chargement */
+body:not(.loaded) .animate-in {
+  animation: none !important;
+  opacity: 0;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.loader-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.1em;
+  animation: fadeInScale 1s ease-out;
+}
+
+.loader-logo span {
+  font-weight: 700;
+  color: #F5F1E8;
+}
+
+/* Spinner en forme de feuille */
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  animation: fadeIn 1s ease-out 0.3s both;
+}
+
+.spinner-leaf {
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -247,7 +343,11 @@ body {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: url('assets/photos/wooden-house-grassy-field-surrounded-by-plants-flowers.jpg') center/cover no-repeat;
+  background-color: #8B9573;
+  background-image: url('assets/photos/wooden-house-grassy-field-surrounded-by-plants-flowers.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   z-index: 1;
 }
 
@@ -375,6 +475,82 @@ body {
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.75);
   letter-spacing: 0.01em;
+  margin-bottom: 0.75rem;
+}
+
+.location-contact-icons {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+}
+
+.location-contact-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.location-contact-icon:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Bulle de BD pour afficher les infos de contact */
+.contact-bubble {
+  position: absolute;
+  bottom: 45px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(255, 255, 255, 0.98);
+  color: #374836;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  user-select: text;
+  cursor: text;
+}
+
+/* Triangle de la bulle (style BD) */
+.contact-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(255, 255, 255, 0.98);
+  pointer-events: none;
+}
+
+/* Animation d'apparition */
+.location-contact-icon.active .contact-bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
 }
 
 .location-arrow {
@@ -587,6 +763,57 @@ body {
     transform: translateY(0);
   }
 }
+
+/* Scroll Animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Staggered animations */
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.3s; }
+.stagger-4 { transition-delay: 0.4s; }
 
 /* Works Carousel Section - Style LeafLife */
 .works-carousel {
@@ -2154,7 +2381,7 @@ textarea.form-input {
   grid-area: image;
   position: relative;
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible;
   width: 326px;
   height: 554.47px;
   align-self: start;
@@ -2164,6 +2391,13 @@ textarea.form-input {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(55, 72, 54, 0.12);
+  transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-image:hover img {
+  box-shadow: 0 20px 40px rgba(55, 72, 54, 0.2);
 }
 
 /* Contenu à droite */

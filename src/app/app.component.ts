@@ -8,13 +8,23 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
+    <!-- Loader -->
+    <div class="page-loader" [class.hidden]="!isLoading">
+      <div class="loader-content">
+        <div class="loader-logo">STUDIO<span>VERT</span></div>
+        <div class="loader-spinner">
+          <div class="spinner-leaf"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="header" [class.scrolled]="isScrolled">
       <div class="header-container">
         <a href="/" class="logo">STUDIO<span>VERT</span></a>
         <nav class="nav">
           <a href="#accueil" class="nav-link">Accueil</a>
-          <a href="#realisations" class="nav-link">Réalisations</a>
+          <a href="#realisations" class="nav-link">Projets</a>
           <a href="#services" class="nav-link">Services</a>
           <a href="#avis" class="nav-link">Avis</a>
           <a href="#contact" class="nav-link contact-btn">Contact</a>
@@ -27,7 +37,7 @@ import { HttpClient } from '@angular/common/http';
       </div>
       <div class="mobile-nav" [class.open]="menuOpen">
         <a href="#accueil" class="mobile-nav-link" (click)="closeMenu()">Accueil</a>
-        <a href="#realisations" class="mobile-nav-link" (click)="closeMenu()">Réalisations</a>
+        <a href="#realisations" class="mobile-nav-link" (click)="closeMenu()">Projets</a>
         <a href="#services" class="mobile-nav-link" (click)="closeMenu()">Services</a>
         <a href="#avis" class="mobile-nav-link" (click)="closeMenu()">Avis</a>
         <a href="#contact" class="mobile-nav-link" (click)="closeMenu()">Contact</a>
@@ -49,6 +59,36 @@ import { HttpClient } from '@angular/common/http';
           <div class="location-content">
             <div class="location-title">StudioVert</div>
             <div class="location-text">Lyon, Alentours & Savoie</div>
+
+            <!-- Contact Icons -->
+            <div class="location-contact-icons">
+              <div class="location-contact-icon"
+                   [class.active]="phoneVisible"
+                   (click)="togglePhone($event)"
+                   title="Téléphone">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                <div class="contact-bubble" (click)="stopPropagation($event)">06 99 66 38 09</div>
+              </div>
+              <div class="location-contact-icon"
+                   [class.active]="emailVisible"
+                   (click)="toggleEmail($event)"
+                   title="Email">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <div class="contact-bubble" (click)="stopPropagation($event)">studiovertpaysage&#64;gmail.com</div>
+              </div>
+              <a href="https://instagram.com/studiovert_paysage" target="_blank" rel="noopener noreferrer" class="location-contact-icon" title="Instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -76,7 +116,7 @@ import { HttpClient } from '@angular/common/http';
     <!-- Works Carousel Section - LeafLife Style -->
     <section id="realisations" class="works-carousel">
       <div class="works-container">
-        <div class="works-header">
+        <div class="works-header scroll-reveal">
           <h2 class="works-title">
             DÉCOUVREZ <span class="works-title-light">NOS</span><br>
             CRÉATIONS
@@ -86,7 +126,7 @@ import { HttpClient } from '@angular/common/http';
           </div>
         </div>
 
-        <div class="works-content-wrapper">
+        <div class="works-content-wrapper scroll-reveal">
           <!-- Drag hint -->
           <div class="works-scroll-hint">
             <span>Glisser pour naviguer →</span>
@@ -134,11 +174,11 @@ import { HttpClient } from '@angular/common/http';
     <!-- Services Section -->
     <section id="services" class="services-v2">
       <div class="services-container">
-        <h3 class="services-section-title">[ SERVICES ]</h3>
+        <h3 class="services-section-title scroll-reveal">[ SERVICES ]</h3>
 
         <!-- Grille de services -->
         <div class="services-grid">
-          <div class="service-card-v2" *ngFor="let service of services; let i = index">
+          <div class="service-card-v2 scroll-reveal-scale" [class.stagger-1]="i === 0" [class.stagger-2]="i === 1" [class.stagger-3]="i === 2" *ngFor="let service of services; let i = index">
             <div class="service-image">
               <img [src]="service.image" [alt]="service.title">
               <div class="service-content-overlay">
@@ -154,7 +194,7 @@ import { HttpClient } from '@angular/common/http';
     <!-- Tax Credit Section -->
     <section class="tax-credit">
       <div class="container">
-        <div class="tax-credit-content">
+        <div class="tax-credit-content scroll-reveal">
           <div class="tax-credit-badge">-50%</div>
           <div class="tax-credit-text">
             <h2 class="tax-credit-title">Crédit d'Impôt</h2>
@@ -176,7 +216,7 @@ import { HttpClient } from '@angular/common/http';
     <section id="avis" class="reviews-v2">
       <div class="reviews-v2-container">
         <!-- Header centré -->
-        <div class="reviews-v2-header">
+        <div class="reviews-v2-header scroll-reveal-scale">
           <h3 class="reviews-section-title">[ AVIS ]</h3>
           <h2 class="reviews-tagline">
             CE QUE DISENT<br>
@@ -188,7 +228,7 @@ import { HttpClient } from '@angular/common/http';
         </div>
 
         <!-- Carousel existant -->
-        <div class="reviews-carousel">
+        <div class="reviews-carousel scroll-reveal-scale stagger-1">
           <button class="carousel-btn prev" (click)="prevReview()" [disabled]="currentReviewIndex === 0">
             ←
           </button>
@@ -241,21 +281,21 @@ import { HttpClient } from '@angular/common/http';
         <!-- Colonne gauche -->
         <div class="contact-left-column">
           <!-- Header avec tagline -->
-          <div class="contact-intro">
+          <div class="contact-intro scroll-reveal-left">
             <h2 class="contact-tagline">Parlons de <span class="contact-tagline-light">vos</span><br>envies</h2>
           </div>
 
           <!-- Image -->
-          <div class="contact-image">
+          <div class="contact-image scroll-reveal-left stagger-1">
             <img src="assets/photos/wooden-house-grassy-field-surrounded-by-plants-flowers.jpg" alt="Studio Vert Paysage">
           </div>
         </div>
 
         <!-- Section Title en haut à droite -->
-        <h3 class="contact-section-title">[ CONTACT ]</h3>
+        <h3 class="contact-section-title scroll-reveal-right">[ CONTACT ]</h3>
 
         <!-- Contenu à droite -->
-        <div class="contact-content">
+        <div class="contact-content scroll-reveal-right stagger-1">
           <!-- En-tête avec nom -->
           <div class="contact-header">
             <h2 class="contact-name">Bonjour, je suis <span>Damien</span></h2>
@@ -397,6 +437,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   currentReviewIndex = 0;
   currentWorkIndex = 0;
   formSubmitted = false;
+  phoneVisible = false;
+  emailVisible = false;
+  isLoading = true;
 
   formData = {
     name: '',
@@ -505,10 +548,53 @@ export class AppComponent implements OnInit, AfterViewInit {
       window.addEventListener('scroll', () => {
         this.isScrolled = window.scrollY > 50;
       });
+
+      // Setup scroll animations
+      this.setupScrollAnimations();
+
+      // Fermer les bulles de contact si on clique ailleurs
+      document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        // Ne pas fermer si on clique sur l'icône ou sur la bulle elle-même
+        if (!target.closest('.location-contact-icon') && !target.closest('.contact-bubble')) {
+          this.phoneVisible = false;
+          this.emailVisible = false;
+        }
+      });
+
+      // Masquer le loader une fois que tout est chargé
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          this.isLoading = false;
+          // Ajouter une classe au body pour déclencher les animations
+          document.body.classList.add('loaded');
+        }, 500);
+      });
     }
 
     // Charger les avis Google depuis le fichier JSON
     this.loadGoogleReviews();
+  }
+
+  setupScrollAnimations() {
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all scroll-reveal elements
+    setTimeout(() => {
+      const elements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale');
+      elements.forEach(el => observer.observe(el));
+    }, 100);
   }
 
   loadGoogleReviews() {
@@ -660,12 +746,52 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   submitForm() {
     console.log('Form submitted:', this.formData);
-    console.log('Attachments:', this.formData.attachments);
-    this.formSubmitted = true;
 
-    setTimeout(() => {
-      this.formData = { name: '', email: '', phone: '', message: '', attachments: [] };
-      this.formSubmitted = false;
-    }, 5000);
+    // Préparer les données à envoyer (sans les fichiers pour l'instant)
+    const formPayload = {
+      name: this.formData.name,
+      email: this.formData.email,
+      phone: this.formData.phone,
+      message: this.formData.message
+    };
+
+    // Envoyer au backend
+    this.http.post('http://localhost:3000/api/contact', formPayload).subscribe({
+      next: (response: any) => {
+        console.log('✅ Email envoyé avec succès:', response);
+        this.formSubmitted = true;
+
+        setTimeout(() => {
+          this.formData = { name: '', email: '', phone: '', message: '', attachments: [] };
+          this.formSubmitted = false;
+        }, 5000);
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de l\'envoi:', error);
+        alert('Erreur lors de l\'envoi du message. Veuillez vérifier que le backend est démarré.');
+      }
+    });
+  }
+
+  togglePhone(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.phoneVisible = !this.phoneVisible;
+    if (this.phoneVisible) {
+      this.emailVisible = false;
+    }
+  }
+
+  toggleEmail(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.emailVisible = !this.emailVisible;
+    if (this.emailVisible) {
+      this.phoneVisible = false;
+    }
+  }
+
+  stopPropagation(event: Event) {
+    event.stopPropagation();
   }
 }
