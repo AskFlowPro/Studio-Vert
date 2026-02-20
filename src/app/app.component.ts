@@ -20,7 +20,7 @@ import { ToastrService } from 'ngx-toastr';
     </div>
 
     <!-- Header -->
-    <header class="header" [class.scrolled]="isScrolled">
+    <header class="header" [class.scrolled]="isScrolled" [class.menu-open]="menuOpen">
       <div class="header-container">
         <a href="/" class="logo">STUDIO<span>VERT</span></a>
         <nav class="nav">
@@ -37,6 +37,7 @@ import { ToastrService } from 'ngx-toastr';
         </button>
       </div>
       <div class="mobile-nav" [class.open]="menuOpen">
+        <div class="mobile-nav-brand">STUDIO<span>VERT</span></div>
         <a href="#accueil" class="mobile-nav-link" (click)="closeMenu()">Accueil</a>
         <a href="#realisations" class="mobile-nav-link" (click)="closeMenu()">Projets</a>
         <a href="#services" class="mobile-nav-link" (click)="closeMenu()">Services</a>
@@ -719,21 +720,29 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+    this.syncPageScrollLock();
   }
 
   closeMenu() {
     this.menuOpen = false;
+    this.syncPageScrollLock();
+  }
+
+  private syncPageScrollLock() {
+    const shouldLock = this.menuOpen || this.lightboxOpen;
+    document.body.style.overflow = shouldLock ? 'hidden' : 'auto';
+    document.documentElement.style.overflow = shouldLock ? 'hidden' : 'auto';
   }
 
   openLightbox(index: number) {
     this.currentPhotoIndex = index;
     this.lightboxOpen = true;
-    document.body.style.overflow = 'hidden';
+    this.syncPageScrollLock();
   }
 
   closeLightbox() {
     this.lightboxOpen = false;
-    document.body.style.overflow = 'auto';
+    this.syncPageScrollLock();
   }
 
   nextPhoto(event: Event) {
