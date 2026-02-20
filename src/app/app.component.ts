@@ -609,13 +609,23 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
 
       // Masquer le loader une fois que tout est chargé
+      const hideLoader = () => {
+        this.isLoading = false;
+        document.body.classList.add('loaded');
+      };
+
+      // Écouter l'événement load
       window.addEventListener('load', () => {
-        setTimeout(() => {
-          this.isLoading = false;
-          // Ajouter une classe au body pour déclencher les animations
-          document.body.classList.add('loaded');
-        }, 500);
+        setTimeout(hideLoader, 500);
       });
+
+      // Fallback: masquer le loader après 3 secondes maximum
+      setTimeout(() => {
+        if (this.isLoading) {
+          console.warn('⚠️ Loader timeout - masquage forcé');
+          hideLoader();
+        }
+      }, 3000);
     }
 
     // Charger les avis Google depuis le fichier JSON
