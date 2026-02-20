@@ -26,8 +26,8 @@ db.settings({
 
 // ============ CONFIGURATION ============
 const CONFIG = {
-  googleApiKey: process.env.GOOGLE_API_KEY || 'AIzaSyCrKEvFxcABHXKD-E6xxNe_YwviEXROGuE',
-  googlePlaceId: process.env.GOOGLE_PLACE_ID || 'ChIJwfhSL4Pq9EcRqcmswNRXNzU',
+  googleApiKey: process.env.GOOGLE_API_KEY || 'AIzaSyDN-hFx4zeWOn5cmEHQsyagKxuiGQeYd0o',
+  googlePlaceId: process.env.GOOGLE_PLACE_ID || 'ChIJtx8hMvcl_GQRaTnOQOhK9cE',
   emailTo: process.env.EMAIL_TO || 'studiovertpaysage@gmail.com',
   emailUser: process.env.EMAIL_USER || 'studiovertpaysage@gmail.com',
   emailPassword: process.env.EMAIL_PASSWORD || '',

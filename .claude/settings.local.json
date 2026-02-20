@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(firebase functions:config:set:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(firebase functions:log:*)",
+      "Bash(python -m json.tool:*)"
     ]
   }
 }

@@ -5,7 +5,7 @@
   <!-- Page d'accueil -->
   <url>
     <loc>https://studiovertpaysage.fr/</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -13,7 +13,7 @@
   <!-- Section Projets/Réalisations -->
   <url>
     <loc>https://studiovertpaysage.fr/#realisations</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -21,7 +21,7 @@
   <!-- Section Services -->
   <url>
     <loc>https://studiovertpaysage.fr/#services</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -29,7 +29,7 @@
   <!-- Section Avis -->
   <url>
     <loc>https://studiovertpaysage.fr/#avis</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -37,7 +37,7 @@
   <!-- Section Contact -->
   <url>
     <loc>https://studiovertpaysage.fr/#contact</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
