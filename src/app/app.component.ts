@@ -493,6 +493,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   fileUploadError = '';
 
   @ViewChild('carouselContainer') carouselContainer!: ElementRef<HTMLElement>;
+  private isManualSlide = false; // Flag pour empêcher le double trigger
 
   constructor(
     private http: HttpClient,
@@ -683,12 +684,76 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Slick carousel gère tout automatiquement
+    // Setup scroll listener for carousel on mobile
+    this.setupCarouselScrollListener();
+  }
+
+  setupCarouselScrollListener() {
+    const container = this.carouselContainer?.nativeElement;
+    if (!container) return;
+
+    const isMobile = () => window.innerWidth <= 768;
+    const getSlideWidth = () => this.getSlideWidth();
+
+    let isLooping = false;
+
+    container.addEventListener('scroll', () => {
+      // Si c'est un slide manuel (clic sur NEXT), ignorer le scroll listener
+      if (this.isManualSlide || isLooping) return;
+
+      const slideWidth = getSlideWidth();
+      const scrollLeft = container.scrollLeft;
+      const totalSlides = this.featuredPhotos.length;
+      const currentIndex = Math.round(scrollLeft / slideWidth) % totalSlides;
+
+      if (currentIndex !== this.currentWorkIndex) {
+        const animatedElements = document.querySelectorAll('.work-info-animated') as NodeListOf<HTMLElement>;
+        animatedElements.forEach(el => {
+          el.style.animation = 'fadeOut 0.3s ease forwards';
+        });
+
+        setTimeout(() => {
+          this.currentWorkIndex = currentIndex;
+          setTimeout(() => {
+            animatedElements.forEach(el => {
+              el.style.animation = 'fadeInUp 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards';
+            });
+          }, 50);
+        }, 300);
+      }
+
+      if (isMobile()) {
+        const secondSetStart = totalSlides * slideWidth;
+        if (scrollLeft >= secondSetStart) {
+          isLooping = true;
+          container.style.scrollBehavior = 'auto';
+          container.scrollLeft = scrollLeft - secondSetStart;
+          requestAnimationFrame(() => {
+            isLooping = false;
+            container.style.scrollBehavior = 'smooth';
+          });
+        }
+      }
+    });
+  }
+
+  getSlideWidth(): number {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      // Mobile: calculate based on viewport width (100vw - 4rem padding)
+      return window.innerWidth - 64; // 4rem = 64px
+    }
+    return 1063 + 24; // desktop: width + gap
   }
 
   nextSlide() {
     const container = this.carouselContainer?.nativeElement;
     if (!container) return;
+
+    // Activer le flag pour bloquer le scroll listener
+    this.isManualSlide = true;
+
+    const slideWidth = this.getSlideWidth();
 
     // Animate only values and description (not labels)
     const animatedElements = document.querySelectorAll('.work-info-animated') as NodeListOf<HTMLElement>;
@@ -697,8 +762,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     setTimeout(() => {
-      const slideWidth = 1063 + 24; // width + gap
-
       // Move to next slide
       this.currentWorkIndex = (this.currentWorkIndex + 1) % this.featuredPhotos.length;
       container.scrollBy({ left: slideWidth, behavior: 'smooth' });
@@ -717,6 +780,11 @@ export class AppComponent implements OnInit, AfterViewInit {
             container.style.scrollBehavior = 'smooth';
           }, 50);
         }
+
+        // Désactiver le flag après la fin de l'animation
+        setTimeout(() => {
+          this.isManualSlide = false;
+        }, 100);
       }, 600);
 
       // Animate text in

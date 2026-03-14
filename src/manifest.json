@@ -1,0 +1,21 @@
+{
+  "name": "Studio Vert - Paysagiste",
+  "short_name": "Studio Vert",
+  "description": "Création et entretien de jardins à Lyon",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#8B9573",
+  "theme_color": "#8B9573",
+  "icons": [
+    {
+      "src": "https://studiovertpaysage.fr/assets/logos/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "https://studiovertpaysage.fr/assets/logos/android-chrome-512x512.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
